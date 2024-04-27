@@ -24,23 +24,36 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    const countriesCollection = client.db("touristsSpot").collection("countries");
+    const touristsSpotCollection = client.db("touristsSpot").collection("spot");
+  
+    app.post("/addTouristsSpot", async (req, res) => {
+      console.log(req.body);
+      const result = await touristsSpotCollection.insertOne(req.body);
+      console.log(result);
+      res.send(result)
+    })
+    app.get("/addTouristsSpot", async (req, res) => {
+      const touristsSpot = await touristsSpotCollection.find().toArray();
+      res.json(touristsSpot);
+    });
+    app.get("/countries", async (req, res) => {
+      const countries = await countriesCollection.find().toArray();
+      res.json(countries);
+    });
+
+    app.get("/", (req, res) => {
+      res.send("Asia Adventures Hub Server is running!");
+    });
+
+    app.listen(port, () => {
+      console.log(`Asia Adventures Hub is running on Port:${port}`);
+    });
+    
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
-
-
-app.get("/", (req, res) => {
-    res.send("Asia Adventures Hub Surver is running!");
-  });
-  
-  app.listen(port, () => {
-    console.log(`Asia Adventures Hub is running on Port:${port}`);
-  });
