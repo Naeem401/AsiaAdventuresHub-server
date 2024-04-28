@@ -37,6 +37,11 @@ async function run() {
       const touristsSpot = await touristsSpotCollection.find().toArray();
       res.json(touristsSpot);
     });
+     app.get("/myTouristsSpot/:email", async (req, res) => {
+      console.log(req.params.email);
+      const result = await productCollection.find({ email: req.params.email }).toArray();
+      res.send(result)
+    })
     app.get("/countries", async (req, res) => {
       const countries = await countriesCollection.find().toArray();
       res.json(countries);
