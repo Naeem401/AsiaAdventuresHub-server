@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 require("dotenv").config();
 const app = express();
@@ -28,18 +28,28 @@ async function run() {
     const touristsSpotCollection = client.db("touristsSpot").collection("spot");
   
     app.post("/addTouristsSpot", async (req, res) => {
-      console.log(req.body);
       const result = await touristsSpotCollection.insertOne(req.body);
-      console.log(result);
       res.send(result)
-    })
+    });
     app.get("/addTouristsSpot", async (req, res) => {
       const touristsSpot = await touristsSpotCollection.find().toArray();
       res.json(touristsSpot);
     });
+    app.get('/addTouristsSpot/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await touristsSpotCollection.findOne(query);
+      res.send(result);
+  })
      app.get("/myTouristsSpot/:email", async (req, res) => {
-      console.log(req.params.email);
-      const result = await productCollection.find({ email: req.params.email }).toArray();
+      const result = await touristsSpotCollection.find({ email: req.params.userEmail }).toArray();
+      res.send(result)
+    })
+   
+    app.delete('/myTouristsSpot/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await touristsSpotCollection.deleteOne(query)
       res.send(result)
     })
     app.get("/countries", async (req, res) => {
